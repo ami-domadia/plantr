@@ -1,6 +1,7 @@
 
 const {orm, Gardener, Plot, Vegetable} = require('./model.js')
 
+module.exports = ()=>{
 orm.sync({force: true})
 .then(()=>{
     console.log('DB connected through the ORM!')
@@ -11,8 +12,8 @@ orm.sync({force: true})
     return Promise.all([veg1, veg2])
 })
 .then(([veg1, veg2])=>{
-    const tom = Gardener.create({name: 'tom', age: 2, favoriteVegetableId: veg1.id})
-    const carl = Gardener.create({name: 'carl', age: 4, favoriteVegetableId: veg2.id})
+    const tom = Gardener.create({name: 'tom', age: 2, favoriteVegetableId: veg2.id})
+    const carl = Gardener.create({name: 'carl', age: 4, favoriteVegetableId: veg1.id})
     return Promise.all([tom, carl, veg1, veg2])
 }) 
 .then(([tom, carl, veg1, veg2])=>{
@@ -21,14 +22,16 @@ orm.sync({force: true})
     return Promise.all([veg1, veg2, plot1, plot2])
 })
 .then(([veg1, veg2, plot1, plot2])=>{
-    veg1.setPlot(plot1)
-    veg2.setPlot(plot2)
+    return Promise.all([veg1.addPlot(plot1),
+    veg2.addPlot(plot2)])
 })
 .catch((err)=>{
     console.log('Errors while working the ORM!')
     console.log(err)
 })
-.finally(()=>{
-    orm.close()
-})
+// .finally(()=>{
+//     orm.close()
+// })
+
+}
 
